@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# supabase (local CLI cache — machine-specific, do not commit)
+supabase/.temp
+supabase/.branches
+
+# opennext / cloudflare build output + generated types
+.open-next
+.wrangler
+cloudflare-env.d.ts
+.dev.vars

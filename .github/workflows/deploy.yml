@@ -3,8 +3,8 @@ name: Deploy to Vercel
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+-rc*'  # Preview: v1.0.0-rc, v1.0.0-rc.1, etc.
-      - 'v[0-9]+.[0-9]+.[0-9]+'      # Production: v1.0.0, v1.0.0-beta (non-rc)
+      - 'v[0-9]+\.[0-9]+\.[0-9]+-rc*'  # Preview: v1.0.0-rc, v1.0.0-rc.1, etc.
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'      # Production: v1.0.0 (but not -rc, handled by condition)
 
 env:
   VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
@@ -43,7 +43,63 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Preview
+        id: deploy
+        run: |
+          PREVIEW_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+      - name: Notify Discord - Preview
+        if: success()
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+          TAG_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_PREVIEW }}
+        run: |
+          cat > discord_payload.json <<EOF
+          {
+            "thread_name": "Preview $TAG_NAME",
+            "embeds": [{
+              "title": "🚀 Preview Deployment Ready",
+              "description": "New preview build is live!",
+              "color": 3066993,
+              "fields": [
+                {
+                  "name": "Tag",
+                  "value": "\`$TAG_NAME\`",
+                  "inline": true
+                },
+                {
+                  "name": "Status",
+                  "value": "✅ Success",
+                  "inline": true
+                },
+                {
+                  "name": "Preview URL",
+                  "value": "$PREVIEW_URL",
+                  "inline": false
+                },
+                {
+                  "name": "Commit",
+                  "value": "\`$COMMIT_SHA\`",
+                  "inline": true
+                },
+                {
+                  "name": "Branch",
+                  "value": "staging",
+                  "inline": true
+                }
+              ],
+              "footer": {
+                "text": "KTD Frontend - Preview"
+              }
+            }]
+          }
+          EOF
+
+          curl -s -X POST "$WEBHOOK" \
+            -H 'Content-Type: application/json' \
+            -d @discord_payload.json
 
   deploy-production:
     name: Deploy Production
@@ -65,4 +121,63 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Production
+        id: deploy_prod
+        run: |
+          PRODUCTION_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "production_url=$PRODUCTION_URL" >> $GITHUB_OUTPUT
+      - name: Notify Discord - Production
+        if: success()
+        env:
+          PRODUCTION_URL: ${{ steps.deploy_prod.outputs.production_url }}
+          TAG_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          cat > discord_payload.json <<'EOF'
+          {
+            "embeds": [{
+              "title": "🎉 Production Deployment Successful",
+              "description": "Tag: $TAG_NAME",
+              "color": 15158332,
+              "fields": [
+                {
+                  "name": "Project",
+                  "value": "KTD Frontend",
+                  "inline": true
+                },
+                {
+                  "name": "Environment",
+                  "value": "Production",
+                  "inline": true
+                },
+                {
+                  "name": "Production URL",
+                  "value": "$PRODUCTION_URL",
+                  "inline": false
+                },
+                {
+                  "name": "Commit",
+                  "value": "`$COMMIT_SHA`",
+                  "inline": true
+                }
+              ]
+            }],
+            "components": [
+              {
+                "type": 1,
+                "components": [
+                  {
+                    "type": 2,
+                    "label": "View Production",
+                    "style": 5,
+                    "url": "$PRODUCTION_URL"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+
+          curl -X POST ${{ secrets.DISCORD_WEBHOOK_PRODUCTION }} \
+            -H 'Content-Type: application/json' \
+            -d @discord_payload.json

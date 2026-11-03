@@ -1,4 +1,7 @@
-import { translations } from '@/i18n/translations';
+import type { Metadata } from 'next';
+import { SITE_URL } from '@/config/site';
+import { getSubCompanyConfig } from '@/config/sub-companies';
+import { getLandingContent } from '@/services/landing';
 
 import { About } from '@/components/landing/about';
 import { CompanyShowcase } from '@/components/landing/company-showcase';
@@ -7,89 +10,76 @@ import { Hero } from '@/components/landing/hero';
 import { Navbar } from '@/components/landing/navbar';
 import { Services } from '@/components/landing/services';
 
-const companies = [
-  {
-    name: {
-      en: translations.en.companies.hiterratech.name,
-      th: translations.th.companies.hiterratech.name,
-    },
-    bgColor: '#000000',
-    description: {
-      en: translations.en.companies.hiterratech.description,
-      th: translations.th.companies.hiterratech.description,
-    },
-    socialLinks: {
-      website: 'https://www.google.com/',
-      facebook: 'https://www.google.com/',
-      instagram: 'https://www.google.com/',
-    },
-    // Place images in: public/assets/companies/hiterratech/
-    images: [
-      '/assets/companies/hiterratech/hiterratech1.jpg',
-      '/assets/companies/hiterratech/hiterratech2.jpg',
-      '/assets/companies/hiterratech/hiterratech3.jpg',
-      '/assets/companies/hiterratech/hiterratech4.jpg',
-    ],
-  },
-  {
-    name: {
-      en: translations.en.companies.silachai.name,
-      th: translations.th.companies.silachai.name,
-    },
-    bgColor: 'linear-gradient(360deg, #010214 0%, #39005D 100%)',
-    description: {
-      en: translations.en.companies.silachai.description,
-      th: translations.th.companies.silachai.description,
-    },
-    socialLinks: {
-      website: 'https://www.google.com/',
-      facebook: 'https://www.google.com/',
-      instagram: 'https://www.google.com/',
-    },
-    // Place images in: public/assets/companies/silachai/
-    images: [
-      '/assets/companies/silachai/silachai1.jpg',
-      '/assets/companies/silachai/silachai2.png',
-      '/assets/companies/silachai/silachai3.jpg',
-      '/assets/companies/silachai/silachai4.jpg',
-    ],
-  },
-  {
-    name: {
-      en: translations.en.companies.kitthana.name,
-      th: translations.th.companies.kitthana.name,
-    },
-    bgColor: '#000000',
-    bottomImage: '/assets/companies/kitthana/company-bottom.png',
-    description: {
-      en: translations.en.companies.kitthana.description,
-      th: translations.th.companies.kitthana.description,
-    },
-    socialLinks: {
-      website: 'https://www.google.com/',
-      facebook: 'https://www.google.com/',
-      instagram: 'https://www.google.com/',
-    },
-    // Place images in: public/assets/companies/kitthana/
-    images: [
-      '/assets/companies/kitthana/kitthana1.jpg',
-      '/assets/companies/kitthana/kitthana2.jpg',
-      '/assets/companies/kitthana/kitthana3.png',
-      '/assets/companies/kitthana/kitthana4.jpg',
-    ],
-  },
-];
+import type { LandingContent } from '@/types/landing';
 
-export default function Home() {
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
+
+/**
+ * JSON-LD structured data, built from the live CMS content so search and AI
+ * answer engines always see the same names/descriptions as human visitors.
+ * Placeholder social links (google.com) are filtered out of sameAs.
+ */
+function buildJsonLd(content: LandingContent) {
+  const isRealLink = (href?: string) => Boolean(href && !href.includes('google.com'));
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'KTD Group',
+    description:
+      'Full-Spectrum Technopreneur bridging deep technical engineering and entrepreneurial growth.',
+    url: SITE_URL,
+    sameAs: [],
+    knowsAbout: [
+      'Satellite Data Engineering',
+      'Rock Quarry Operations',
+      'Brick Manufacturing',
+      'Automated Infrastructure',
+    ],
+    subOrganization: content.companies.map((company) => ({
+      '@type': 'Organization',
+      name: company.name.en,
+      alternateName: company.name.th !== company.name.en ? company.name.th : undefined,
+      description: company.description.en,
+      // Companies with a dedicated page get its URL; others anchor to their showcase section
+      url: getSubCompanyConfig(company.slug)
+        ? `${SITE_URL}/${company.slug}`
+        : `${SITE_URL}/#${company.slug}`,
+      sameAs: Object.values(company.socialLinks).filter(isRealLink),
+      parentOrganization: { '@type': 'Organization', name: 'KTD Group', url: SITE_URL },
+    })),
+  };
+}
+
+export default async function Home() {
+  // CMS content merged over static defaults (cached, tagged for admin invalidation)
+  const content = await getLandingContent();
+  const jsonLd = buildJsonLd(content);
+
   return (
     <>
+      {/* Structured data for SEO — not visible to users */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main>
-        <Hero />
+        <Hero backgroundImage={content.heroImages.background} />
         <About />
-        <Services />
-        {companies.map((company) => (
-          <CompanyShowcase key={company.name.en} {...company} />
+        <Services images={content.serviceImages} />
+        {content.companies.map((company) => (
+          <CompanyShowcase
+            key={company.slug}
+            id={company.slug}
+            bgColor={company.bgColor}
+            socialLinks={company.socialLinks}
+            images={company.images}
+            name={company.name}
+            description={company.description}
+          />
         ))}
       </main>
       <Footer />
