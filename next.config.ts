@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 /**
  * Allow next/image to load CMS media from the Supabase Storage public bucket.
@@ -31,3 +32,7 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Enables Cloudflare bindings (R2, KV, etc.) during `next dev`.
+// No-op at build/runtime on Cloudflare; only active in local dev.
+initOpenNextCloudflareForDev();
