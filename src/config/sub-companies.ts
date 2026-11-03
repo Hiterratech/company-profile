@@ -114,6 +114,8 @@ export interface SubCompanyFooter {
 export interface SubCompanyConfig {
   slug: 'hiterratech' | 'silachai' | 'kitthana';
   name: string;
+  /** Header logo path under /public. Falls back to the company name text when absent. */
+  logo?: string;
   theme: SubCompanyTheme;
   nav: SubCompanyNav;
   hero: SubCompanyHero;
@@ -127,6 +129,7 @@ export const SUB_COMPANIES: Record<string, SubCompanyConfig> = {
   hiterratech: {
     slug: 'hiterratech',
     name: 'Hiterratech',
+    logo: '/assets/sub-company/header/hiterratech-logo.png',
     theme: {
       primary: '#7A00CF',
       accent: '#6A1CF6',
@@ -246,6 +249,249 @@ export const SUB_COMPANIES: Record<string, SubCompanyConfig> = {
         { label: 'LINKEDIN', href: 'https://www.linkedin.com/' },
         { label: 'TWITTER', href: 'https://www.twitter.com/' },
         { label: 'GITHUB', href: 'https://www.github.com/' },
+      ],
+    },
+  },
+  silachai: {
+    slug: 'silachai',
+    name: 'Silachai Charoen',
+    theme: {
+      primary: '#39005D',
+      accent: '#A92DFF',
+      background: '#FFFFFF',
+      headerBg: '#FFFFFF',
+      headerText: '#1A0033',
+      sectionBgAlt: '#F7F3FB',
+      footerBg: '#010214',
+    },
+    nav: {
+      links: [
+        { label: 'Home', href: '#home' },
+        { label: 'About', href: '#about' },
+        { label: 'Services', href: '#services' },
+        { label: 'Solution', href: '#solution' },
+        { label: 'Contact', href: '#contact' },
+      ],
+    },
+    hero: {
+      titleLine1: 'Reliable Aggregate &',
+      titleLine2: 'Rock Quarry Supply',
+      subtitle:
+        'A trusted rock quarry operation delivering high-quality crushed stone and aggregates for construction and infrastructure projects across the region.',
+      images: {
+        small: '/assets/sub-company/hero/hero-image-1.jpg',
+        large: '/assets/sub-company/hero/hero-image-2.jpg',
+      },
+      cta: { label: 'Get Started', href: '#about' },
+    },
+    about: {
+      label: 'QUALITY AGGREGATE, DELIVERED',
+      title: 'Need quality\nStone & aggregate?',
+      description:
+        'From crushed stone to construction aggregate, Silachai Charoen supplies dependable materials backed by consistent quality control and on-time delivery.',
+      descriptionHighlights: [
+        { phrase: 'crushed stone', weight: 'semibold', color: '#39005D' },
+        { phrase: 'consistent quality', weight: 'bold', color: '#A92DFF' },
+      ],
+      stats: [
+        { value: '100%', label: 'QUALITY CONTROLLED' },
+        { value: '30+', label: 'YEARS IN OPERATION' },
+      ],
+      cards: [
+        {
+          title: 'Crushed Stone',
+          description:
+            'Graded crushed stone in multiple sizes for road base, concrete, and foundation work.',
+          icon: '/assets/sub-company/about/gallery-icon.svg',
+        },
+        {
+          title: 'Construction Aggregate',
+          description:
+            'High-grade aggregate supply for large-scale construction and infrastructure projects.',
+          icon: '/assets/sub-company/about/map-icon.svg',
+          highlighted: true,
+        },
+        {
+          title: 'Quarry Operations',
+          description:
+            'Efficient, safety-first quarry operations with modern crushing and screening plants.',
+          icon: '/assets/sub-company/about/sun-icon.svg',
+        },
+        {
+          title: 'Bulk Delivery',
+          description: 'Reliable bulk logistics to deliver materials on schedule to your site.',
+          icon: '/assets/sub-company/about/trading-icon.svg',
+        },
+      ],
+    },
+    services: {
+      title: 'Our Service',
+      subtitle:
+        'Supplying the volume and consistency required for modern construction and infrastructure.',
+      items: [
+        {
+          title: 'Crushed Stone Supply',
+          description:
+            'Multiple grades of crushed stone for road base, concrete mixing, and foundations.',
+          icon: '/assets/sub-company/services/tool-icon.svg',
+        },
+        {
+          title: 'Quarry Site Operations',
+          description:
+            'End-to-end quarry extraction, crushing, and screening with strict quality control.',
+          icon: '/assets/sub-company/services/engineer-icon.svg',
+        },
+        {
+          title: 'Aggregate Logistics',
+          description:
+            'Scheduled bulk delivery of aggregate materials directly to your project site.',
+          icon: '/assets/sub-company/services/cloud-icon.svg',
+        },
+      ],
+    },
+    solution: {
+      titlePrefix: 'Ready for',
+      titleHighlight: 'Supply?',
+      description:
+        'Partner with Silachai Charoen for a dependable, quality-controlled aggregate supply chain.',
+      cta: { label: 'Contact Us', href: '#contact' },
+    },
+    footer: {
+      brandName: 'SILACHAI CHAROEN',
+      copyright: '© 2026 SILACHAI CHAROEN. ROCK QUARRY\nAND AGGREGATE SUPPLY SPECIALISTS.',
+      navLinks: [
+        { label: 'HOME', href: '#home' },
+        { label: 'SOLUTIONS', href: '#solution' },
+        { label: 'ABOUT', href: '#about' },
+      ],
+      specializations: [
+        { label: 'ROCK QUARRY' },
+        { label: 'CRUSHED STONE' },
+        { label: 'CONSTRUCTION AGGREGATE' },
+      ],
+      socialLinks: [
+        { label: 'LINKEDIN', href: 'https://www.linkedin.com/' },
+        { label: 'FACEBOOK', href: 'https://www.facebook.com/' },
+      ],
+    },
+  },
+  kitthana: {
+    slug: 'kitthana',
+    name: 'Kitthana Sap',
+    theme: {
+      primary: '#B45309',
+      accent: '#F59E0B',
+      background: '#FFFFFF',
+      headerBg: '#FFFFFF',
+      headerText: '#1C1917',
+      sectionBgAlt: '#FAF7F2',
+      footerBg: '#111827',
+    },
+    nav: {
+      links: [
+        { label: 'Home', href: '#home' },
+        { label: 'About', href: '#about' },
+        { label: 'Services', href: '#services' },
+        { label: 'Solution', href: '#solution' },
+        { label: 'Contact', href: '#contact' },
+      ],
+    },
+    hero: {
+      titleLine1: 'Durable Bricks &',
+      titleLine2: 'Building Materials',
+      subtitle:
+        'A dependable brick manufacturer producing durable, consistent building materials for residential and commercial construction.',
+      images: {
+        small: '/assets/sub-company/hero/hero-image-1.jpg',
+        large: '/assets/sub-company/hero/hero-image-2.jpg',
+      },
+      cta: { label: 'Get Started', href: '#about' },
+    },
+    about: {
+      label: 'BUILT TO LAST',
+      title: 'Need durable\nBricks for your build?',
+      description:
+        'Kitthana Sap manufactures quality bricks and building materials with reliable strength and consistent sizing for every construction need.',
+      descriptionHighlights: [
+        { phrase: 'quality bricks', weight: 'semibold', color: '#B45309' },
+        { phrase: 'reliable strength', weight: 'bold', color: '#F59E0B' },
+      ],
+      stats: [
+        { value: '100%', label: 'QUALITY TESTED' },
+        { value: '25+', label: 'YEARS OF CRAFT' },
+      ],
+      cards: [
+        {
+          title: 'Clay Bricks',
+          description:
+            'Durable, uniformly fired clay bricks for structural and facade applications.',
+          icon: '/assets/sub-company/about/gallery-icon.svg',
+        },
+        {
+          title: 'Building Materials',
+          description:
+            'A broad range of building materials supplied to construction projects of any scale.',
+          icon: '/assets/sub-company/about/trading-icon.svg',
+          highlighted: true,
+        },
+        {
+          title: 'Custom Production',
+          description:
+            'Made-to-order brick sizes and finishes to meet specific project requirements.',
+          icon: '/assets/sub-company/about/map-icon.svg',
+        },
+        {
+          title: 'Bulk Supply',
+          description: 'Large-volume production and delivery to keep your build on schedule.',
+          icon: '/assets/sub-company/about/sun-icon.svg',
+        },
+      ],
+    },
+    services: {
+      title: 'Our Service',
+      subtitle: 'Delivering the strength and consistency required for lasting construction.',
+      items: [
+        {
+          title: 'Clay Brick Manufacturing',
+          description: 'Precision-fired clay bricks with consistent strength, sizing, and finish.',
+          icon: '/assets/sub-company/services/engineer-icon.svg',
+        },
+        {
+          title: 'Building Material Supply',
+          description:
+            'A full range of building materials delivered to residential and commercial sites.',
+          icon: '/assets/sub-company/services/tool-icon.svg',
+        },
+        {
+          title: 'Bulk Order Logistics',
+          description:
+            'High-volume production and scheduled delivery for large construction projects.',
+          icon: '/assets/sub-company/services/cloud-icon.svg',
+        },
+      ],
+    },
+    solution: {
+      titlePrefix: 'Ready to',
+      titleHighlight: 'Build?',
+      description: 'Choose Kitthana Sap for durable bricks and building materials you can rely on.',
+      cta: { label: 'Contact Us', href: '#contact' },
+    },
+    footer: {
+      brandName: 'KITTHANA SAP',
+      copyright: '© 2026 KITTHANA SAP. BRICK MANUFACTURING\nAND BUILDING MATERIAL SPECIALISTS.',
+      navLinks: [
+        { label: 'HOME', href: '#home' },
+        { label: 'SOLUTIONS', href: '#solution' },
+        { label: 'ABOUT', href: '#about' },
+      ],
+      specializations: [
+        { label: 'BRICK MANUFACTURING' },
+        { label: 'BUILDING MATERIALS' },
+        { label: 'BULK SUPPLY' },
+      ],
+      socialLinks: [
+        { label: 'LINKEDIN', href: 'https://www.linkedin.com/' },
+        { label: 'FACEBOOK', href: 'https://www.facebook.com/' },
       ],
     },
   },

@@ -30,16 +30,22 @@ export function SubHeader({ config }: Readonly<SubHeaderProps>) {
       }}
     >
       <div className="mx-auto flex h-[82px] max-w-[1440px] items-center justify-between px-4 md:px-[72px]">
-        {/* Logo — left */}
+        {/* Logo — left (falls back to the company name when no logo asset exists) */}
         <Link href={`/${config.slug}`}>
-          <Image
-            src={`/assets/sub-company/header/${config.slug}-logo.png`}
-            alt={`${config.name} logo`}
-            width={140}
-            height={40}
-            className="h-[40px] w-auto object-contain"
-            priority
-          />
+          {config.logo ? (
+            <Image
+              src={config.logo}
+              alt={`${config.name} logo`}
+              width={140}
+              height={40}
+              className="h-[40px] w-auto object-contain"
+              priority
+            />
+          ) : (
+            <span className="text-[22px] font-bold tracking-tight" style={{ color: theme.primary }}>
+              {config.name}
+            </span>
+          )}
         </Link>
 
         {/* Language switcher — right */}
