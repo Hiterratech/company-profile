@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-// Enables Cloudflare bindings (R2, KV, etc.) during `next dev`.
-// No-op at build/runtime on Cloudflare; only active in local dev.
-initOpenNextCloudflareForDev();
+// Enables Cloudflare bindings (R2, KV, etc.) during `next dev` only.
+// Must NOT run during `next build`: it boots Miniflare (workerd), which
+// contends on the local SQLite state and crashes the production build.
+// `next dev` sets NODE_ENV=development; the adapter's own build runs with
+// production, so this guard scopes the dev integration correctly.
+if (process.env.NODE_ENV === 'development') {
+  initOpenNextCloudflareForDev();
+}
