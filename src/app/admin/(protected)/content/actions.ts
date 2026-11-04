@@ -1,6 +1,6 @@
 'use server';
 
-import { updateTag } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { LANDING_CACHE_TAG } from '@/config/landing-cms';
 import { checkAdminAccess } from '@/services/admin';
 import { z } from 'zod';
@@ -113,6 +113,9 @@ export async function saveSection(input: SaveSectionInput): Promise<SaveResult> 
   }
 
   updateTag(LANDING_CACHE_TAG);
+  // updateTag only expires the cached data; the static landing page still
+  // serves its prerendered HTML until its path is revalidated too.
+  revalidatePath('/');
   return { ok: true };
 }
 
@@ -155,5 +158,8 @@ export async function saveCompany(input: SaveCompanyInput): Promise<SaveResult> 
   }
 
   updateTag(LANDING_CACHE_TAG);
+  // updateTag only expires the cached data; the static landing page still
+  // serves its prerendered HTML until its path is revalidated too.
+  revalidatePath('/');
   return { ok: true };
 }
