@@ -68,6 +68,8 @@ export interface LandingCompanyRow {
   social_links: CompanySocialLinks;
   images: string[];
   sort_order: number;
+  /** Side-menu link target. Internal path or absolute URL; null/empty => /<slug> */
+  nav_url?: string | null;
   updated_at?: string;
 }
 
@@ -78,6 +80,8 @@ export interface LandingCompanyContent {
   bottomImage?: string;
   socialLinks: CompanySocialLinks;
   images: string[];
+  /** Resolved side-menu link target (DB nav_url, else /<slug>) */
+  navUrl: string;
   name: Record<Language, string>;
   description: Record<Language, string>;
 }

@@ -41,6 +41,7 @@ export function CompanyForm({ company, languages }: CompanyFormProps) {
   const [bottomImage, setBottomImage] = useState(company.bottom_image ?? '');
   const [socialLinks, setSocialLinks] = useState<CompanySocialLinks>(company.social_links);
   const [images, setImages] = useState(company.images);
+  const [navUrl, setNavUrl] = useState(company.nav_url ?? '');
   const [activeLang, setActiveLang] = useState(languages[0]?.code ?? 'en');
   const [isPending, startTransition] = useTransition();
 
@@ -55,6 +56,7 @@ export function CompanyForm({ company, languages }: CompanyFormProps) {
         bottom_image: bottomImage || null,
         social_links: socialLinks,
         images,
+        nav_url: navUrl.trim() || null,
         sort_order: company.sort_order,
       });
       if (result.ok) {
@@ -119,6 +121,22 @@ export function CompanyForm({ company, languages }: CompanyFormProps) {
               />
               <p className="text-muted-foreground text-xs">
                 Any CSS color or gradient, e.g. linear-gradient(360deg, #010214 0%, #39005D 100%)
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor={`${company.slug}-nav-url`}>Navigation link (side menu)</Label>
+              <Input
+                id={`${company.slug}-nav-url`}
+                value={navUrl}
+                onChange={(event) => setNavUrl(event.target.value)}
+                placeholder={`/${company.slug}`}
+              />
+              <p className="text-muted-foreground text-xs">
+                Where this company links to in the landing-page side menu. Use an internal path like{' '}
+                <code>/{company.slug}</code>, or an external URL like{' '}
+                <code>https://old-site.com</code> while the sub-page is still in development. Leave
+                empty to default to <code>/{company.slug}</code>. External links open in a new tab.
               </p>
             </div>
 

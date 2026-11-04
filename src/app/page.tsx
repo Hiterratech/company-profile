@@ -65,7 +65,12 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar />
+      <Navbar
+        companies={content.companies.map((company) => ({
+          slug: company.slug,
+          href: company.navUrl,
+        }))}
+      />
       <main>
         <Hero backgroundImage={content.heroImages.background} />
         <About />

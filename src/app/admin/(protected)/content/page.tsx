@@ -77,6 +77,7 @@ function buildCompanies(rows: LandingCompanyRow[], codes: Language[]): LandingCo
       bottom_image: config.bottomImage ?? null,
       social_links: config.socialLinks,
       images: [...config.images],
+      nav_url: config.navUrl ?? `/${config.slug}`,
       sort_order: index,
     };
   });

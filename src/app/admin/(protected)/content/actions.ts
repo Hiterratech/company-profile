@@ -41,6 +41,19 @@ const sectionSchema = z.object({
   images: z.record(z.string(), imageUrl).optional(),
 });
 
+/**
+ * Side-menu link target: an internal path ("/hiterratech") or an absolute
+ * http(s) URL (the old company site, used while the sub-page is unfinished).
+ * Empty means "fall back to /<slug>".
+ */
+const navUrl = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value === '' || value.startsWith('/') || /^https?:\/\//i.test(value),
+    'Navigation link must be empty, a path starting with "/", or an http(s):// URL.'
+  );
+
 const companySchema = z.object({
   slug: z.enum(COMPANY_SLUGS),
   name: z.record(languageCode, z.string()),
@@ -53,6 +66,7 @@ const companySchema = z.object({
     instagram: z.string().optional(),
   }),
   images: z.array(imageUrl),
+  nav_url: navUrl.nullable().optional(),
   sort_order: z.number().int().optional(),
 });
 
@@ -114,7 +128,7 @@ export async function saveCompany(input: SaveCompanyInput): Promise<SaveResult> 
   }
 
   const { slug, name, description, bg_color } = parsed.data;
-  const { bottom_image, social_links, images, sort_order } = parsed.data;
+  const { bottom_image, social_links, images, nav_url, sort_order } = parsed.data;
 
   try {
     const supabase = await createClient();
@@ -127,6 +141,7 @@ export async function saveCompany(input: SaveCompanyInput): Promise<SaveResult> 
         bottom_image: bottom_image || null,
         social_links,
         images,
+        nav_url: nav_url ? nav_url : null,
         ...(sort_order !== undefined ? { sort_order } : {}),
       },
       { onConflict: 'slug' }

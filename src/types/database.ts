@@ -74,6 +74,7 @@ export type Database = {
           social_links: Json;
           images: string[];
           sort_order: number;
+          nav_url: string | null;
           updated_at: string;
         };
         Insert: {
@@ -85,6 +86,7 @@ export type Database = {
           social_links?: Json;
           images?: string[];
           sort_order?: number;
+          nav_url?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -96,6 +98,7 @@ export type Database = {
           social_links?: Json;
           images?: string[];
           sort_order?: number;
+          nav_url?: string | null;
           updated_at?: string;
         };
       };

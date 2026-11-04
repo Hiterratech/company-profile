@@ -76,6 +76,7 @@ function staticCompanyContent(
     bottomImage: config.bottomImage,
     socialLinks: config.socialLinks,
     images: config.images,
+    navUrl: config.navUrl || `/${config.slug}`,
     name: localize(codes, (lang) => merged[lang]?.companies[config.slug].name),
     description: localize(codes, (lang) => merged[lang]?.companies[config.slug].description),
   };
@@ -113,12 +114,15 @@ function mapCompanyRow(
   const hasSocialLinks =
     row.social_links != null && Object.values(row.social_links).some((href) => Boolean(href));
 
+  const navUrl = row.nav_url?.trim() || fallback?.navUrl || `/${row.slug}`;
+
   return {
     slug: row.slug,
     bgColor: row.bg_color || fallback?.bgColor || '#000000',
     bottomImage: row.bottom_image ?? fallback?.bottomImage ?? undefined,
     socialLinks: hasSocialLinks ? row.social_links : (fallback?.socialLinks ?? {}),
     images: row.images && row.images.length > 0 ? row.images : (fallback?.images ?? []),
+    navUrl,
     name,
     description,
   };
@@ -165,7 +169,9 @@ async function fetchLandingContent(): Promise<LandingContent> {
       supabase.from('landing_sections').select('key, content, images'),
       supabase
         .from('landing_companies')
-        .select('slug, name, description, bg_color, bottom_image, social_links, images, sort_order')
+        .select(
+          'slug, name, description, bg_color, bottom_image, social_links, images, sort_order, nav_url'
+        )
         .order('sort_order', { ascending: true }),
     ]);
 

@@ -11,11 +11,16 @@ import { motion } from 'motion/react';
 import { LanguageDropdown } from '@/components/landing/language-dropdown';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-const SIDEBAR_COMPANIES = [
-  { key: 'hiterratech' as const, href: '/hiterratech' },
-  { key: 'silachai' as const, href: '/silachai' },
-  { key: 'kitthana' as const, href: '/kitthana' },
-];
+/** One side-menu entry: the company slug (for its localized name) + resolved link. */
+export interface NavbarCompany {
+  slug: string;
+  href: string;
+}
+
+/** True for an absolute external link that should open in a new tab. */
+function isExternal(href: string): boolean {
+  return /^https?:\/\//i.test(href);
+}
 
 const SOCIAL_ICONS = [
   { icon: faFacebook, label: 'Facebook' },
@@ -24,7 +29,7 @@ const SOCIAL_ICONS = [
   { icon: faGlobe, label: 'Website' },
 ] as const;
 
-export function Navbar() {
+export function Navbar({ companies }: { readonly companies: NavbarCompany[] }) {
   const { t } = useLanguage();
 
   return (
@@ -71,26 +76,32 @@ export function Navbar() {
           >
             {/* Companies list */}
             <nav aria-label="Company navigation" className="mx-[16px] my-[28px] flex flex-col">
-              {SIDEBAR_COMPANIES.map((company) => (
-                <div key={company.key}>
-                  <Link
-                    href={company.href}
-                    data-track="nav_click"
-                    data-track-target={company.key}
-                    className="font-anuphan flex items-center justify-between py-4 text-[18px] leading-[140%] font-bold text-white transition-colors hover:bg-white/5"
-                  >
-                    <span>{t.companies[company.key].name}</span>
-                    <Image
-                      src="/assets/landing/navbar/arrow-right-square.svg"
-                      alt=""
-                      role="presentation"
-                      width={20}
-                      height={20}
-                    />
-                  </Link>
-                  <div className="border-t border-[#757575]" />
-                </div>
-              ))}
+              {companies.map((company) => {
+                const external = isExternal(company.href);
+                const label =
+                  t.companies[company.slug as keyof typeof t.companies]?.name ?? company.slug;
+                return (
+                  <div key={company.slug}>
+                    <Link
+                      href={company.href}
+                      data-track="nav_click"
+                      data-track-target={company.slug}
+                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className="font-anuphan flex items-center justify-between py-4 text-[18px] leading-[140%] font-bold text-white transition-colors hover:bg-white/5"
+                    >
+                      <span>{label}</span>
+                      <Image
+                        src="/assets/landing/navbar/arrow-right-square.svg"
+                        alt=""
+                        role="presentation"
+                        width={20}
+                        height={20}
+                      />
+                    </Link>
+                    <div className="border-t border-[#757575]" />
+                  </div>
+                );
+              })}
             </nav>
 
             {/* Social icons */}

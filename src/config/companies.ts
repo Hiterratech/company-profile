@@ -18,6 +18,8 @@ export interface SocialLinks {
 export interface CompanyConfig {
   /** Matches the key in translations.companies */
   slug: 'hiterratech' | 'silachai' | 'kitthana';
+  /** Side-menu link target. Omitted => defaults to `/<slug>` in the data layer. */
+  navUrl?: string;
   /** CSS color or gradient string for the section background */
   bgColor: string;
   /** Optional decorative image rendered at the bottom of the section */
